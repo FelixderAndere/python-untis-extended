@@ -1,5 +1,8 @@
 import session
-impo
+import objects
+import homework
+import timetable
+import schoolsearch
 
 
 class untis():
