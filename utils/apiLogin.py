@@ -20,9 +20,12 @@ class WebUntisClient:
     def logout(self):
         response = self.session.get(
             f"{self.base_url}/saml/logout",
+            allow_redirects=False,
             timeout=15,
         )
-        response.raise_for_status()
+
+        print(response.status_code)
+        print(response.headers.get("Location"))
         print(response.text)
         
 
@@ -83,3 +86,9 @@ if __name__ == "__main__":
     print(f"{client.session.cookies.get_dict() = }")
     
     client.logout()
+
+    try:
+        print(client._fetch_token())
+        print("LOGOUT FAILED!!!: Token still valid after logout.")
+    except RuntimeError as e:
+        print(f"Logout succeeded: {e}")
