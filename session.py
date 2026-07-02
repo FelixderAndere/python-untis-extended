@@ -1,36 +1,45 @@
 import requests
+from dotenv import load_dotenv
+import os
+import datetime
+
+load_dotenv()
 
 class session():
-    def __init__(self, base_url) -> None:
-        self.base_url = base_url
+    def __init__(self) -> None:
+        self.base_url = os.getenv("BASE_URL")
+        self.jsessionid = os.getenv("JSESSIONID")
         self.login()
 
+
     def login(self):
-        pass
+        self.send_request(self, "/login")
+
 
     def send_request(self, endpoint, params):
-        base_url = "..."
+        base_url = self.base_url
 
         url = f"{base_url}{endpoint}"
+        print("URL:", url)
 
         headers = {
-            "User-Agent": self.config["useragent"] or "",
+            "User-Agent": "Agent",
             "Content-Type": "application/json",
         }
 
-        if "jsessionid" in self.config:
-            headers["Cookie"] = f'JSESSIONID={self.config["jsessionid"]}'
-        else:
-            raise errors.NotLoggedInError("No JSESSIONID found. Please log in first.")
-
-        print("debug", f"Making custom request to {url} with params: {params}")
-
+    
+        headers["Cookie"] = f'JSESSIONID={self.jsessionid}'
+        
         response = requests.get(url, params=params, headers=headers)
 
-        try:
-            response_data = response.json()
-            print("debug", f"Received valid JSON response: {str(response_data)[:100]}")
-        except json.JSONDecodeError:
-            raise errors.RemoteError("Invalid JSON response", response.text)
 
+        response_data = response.json()
+        print(response_data)
+        
         return response_data
+    
+if __name__ == "__main__":
+    start = datetime.datetime.now()
+    end = start + datetime.timedelta(days=7)
+    s = session()
+    s.send_request(endpoint="/Webuntis/api/homeworks/lessons", params={"startDate": start.strftime("%Y%m%d"), "endDate": end.strftime("%Y%m%d")})
