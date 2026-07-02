@@ -4,15 +4,15 @@ import requests
 from dotenv import load_dotenv
 import os
 import datetime
+from utils import rpcLogin
 
 load_dotenv()
 
 class session():
     def __init__(self) -> None:
         self.base_url = os.getenv("BASE_URL")
-        self.jsessionid = os.getenv("JSESSIONID")
-        # self.login()
-
+        sessionResult = rpcLogin.login(self, self.base_url, os.getenv("UNTIS_USERNAME"), os.getenv("UNTIS_PASSWORD"))
+        self.jsessionid = sessionResult["sessionId"]
 
     def login(self):
         self.send_request(self, "/login")
