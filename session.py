@@ -1,3 +1,5 @@
+from urllib import response
+
 import requests
 from dotenv import load_dotenv
 import os
@@ -25,7 +27,7 @@ class session():
         print("URL:", url)
 
         headers = {
-            "User-Agent": "Agent",
+            "User-Agent": "user",
             "Content-Type": "application/json",
         }
 
@@ -35,13 +37,14 @@ class session():
         response = requests.get(url, params=params, headers=headers)
 
 
-        response_data = response.json()
-        print(response_data)
+        print(response.status_code)
+        print(response.text[:500])
+
         
-        return response_data
+        return response
     
 if __name__ == "__main__":
     start = datetime.datetime.now()
     end = start + datetime.timedelta(days=7)
     s = session()
-    s.send_request(endpoint="/Webuntis/api/homeworks/lessons", params={"startDate": start.strftime("%Y%m%d"), "endDate": end.strftime("%Y%m%d")})
+    s.send_request(endpoint="/WebUntis/api/homeworks/lessons", params={"startDate": start.strftime("%Y%m%d"), "endDate": end.strftime("%Y%m%d")})
