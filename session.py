@@ -15,11 +15,13 @@ class session():
         self.jsessionid = sessionResult["sessionId"]
         print(f"{self.jsessionid = }")
 
+
     def login(self):
         self.send_request(self, "/login")
 
 
     def send_request(self, endpoint, params):
+        """ Sends a GET request to the specified endpoint with the provided parameters."""
         base_url = self.base_url
 
         print("Base URL:", base_url)
@@ -31,19 +33,16 @@ class session():
             "User-Agent": "user",
             "Content-Type": "application/json",
         }
-
-    
         headers["Cookie"] = f'JSESSIONID={self.jsessionid}'
         
         response = requests.get(url, params=params, headers=headers)
 
-
         print(response.status_code)
         print(response.text[:500])
 
-        
         return response
-    
+
+
 if __name__ == "__main__":
     start = datetime.datetime.now()
     end = start + datetime.timedelta(days=7)
