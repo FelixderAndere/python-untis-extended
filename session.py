@@ -11,8 +11,9 @@ load_dotenv()
 class session():
     def __init__(self) -> None:
         self.base_url = os.getenv("BASE_URL")
-        sessionResult = rpcLogin.login(self, self.base_url, os.getenv("UNTIS_USERNAME"), os.getenv("UNTIS_PASSWORD"))
+        sessionResult = rpcLogin.login(self.base_url, username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"))
         self.jsessionid = sessionResult["sessionId"]
+        print(f"{self.jsessionid = }")
 
     def login(self):
         self.send_request(self, "/login")
