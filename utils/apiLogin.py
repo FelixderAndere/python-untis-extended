@@ -24,9 +24,8 @@ class WebUntisClient:
             timeout=15,
         )
 
-        print(response.status_code)
-        print(response.headers.get("Location"))
-        print(response.text)
+        response.raise_for_status()
+        return response.status_code == 302  # Expecting a redirect after logout
         
 
     def _fetch_cookies(self, username: str, password: str):
@@ -74,6 +73,14 @@ class WebUntisClient:
         return self.token
 
 
+def test_session(client: WebUntisClient):
+    try:
+        client._fetch_token()
+        return True
+    except RuntimeError as e:
+        return False
+
+
 
 if __name__ == "__main__":
     load_dotenv()
@@ -82,19 +89,17 @@ if __name__ == "__main__":
     client.login(username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"),)
 
     print(f"{client.token = }")
-    print(f"{client.jsessionid = }")
-    print(f"{client.session.cookies.get_dict() = }")
+    print(f"\n{client.jsessionid = }")
+    print(f"\n{client.session.cookies.get_dict() = }")
 
-    try:
-        print(client._fetch_token())
-        print("Test Success: Token loading succeeded: Token still valid before logout.")
-    except RuntimeError as e:
-        print(f"Test Fail: Fetching token before Logout failed!: {e}")
+    if test_session(client):
+        print("\nTest Success: Login succeeded.")
+    else:
+        print("\nTest Fail: Login failed.")
     
     client.logout()
 
-    try:
-        print(client._fetch_token())
-        print("Test Fail: Token still valid after logout.")
-    except RuntimeError as e:
-        print(f"Test Success: Logout succeeded: {e}")
+    if test_session(client):
+        print("\nTest Fail: Logout failed.")
+    else:
+        print("\nTest Success: Logout succeeded.")
