@@ -8,7 +8,7 @@ import os
 load_dotenv()
 
 
-def login(self, base_url: str, username: str, password: str):
+def login(base_url: str, username: str, password: str):
     payload = {
         "id": "1",
         "method": "authenticate",
