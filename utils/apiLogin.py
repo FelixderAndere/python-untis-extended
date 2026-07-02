@@ -17,6 +17,15 @@ class WebUntisClient:
         self._fetch_token()
 
 
+    def logout(self):
+        response = self.session.get(
+            f"{self.base_url}/saml/logout",
+            timeout=15,
+        )
+        response.raise_for_status()
+        print(response.text)
+        
+
     def _fetch_cookies(self, username: str, password: str):
         response = self.session.post(
             f"{self.base_url}/j_spring_security_check",
@@ -72,3 +81,5 @@ if __name__ == "__main__":
     print(f"{client.token = }")
     print(f"{client.jsessionid = }")
     print(f"{client.session.cookies.get_dict() = }")
+    
+    client.logout()
