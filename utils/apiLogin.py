@@ -84,11 +84,17 @@ if __name__ == "__main__":
     print(f"{client.token = }")
     print(f"{client.jsessionid = }")
     print(f"{client.session.cookies.get_dict() = }")
+
+    try:
+        print(client._fetch_token())
+        print("Test Success: Token loading succeeded: Token still valid before logout.")
+    except RuntimeError as e:
+        print(f"Test Fail: Fetching token before Logout failed!: {e}")
     
     client.logout()
 
     try:
         print(client._fetch_token())
-        print("LOGOUT FAILED!!!: Token still valid after logout.")
+        print("Test Fail: Token still valid after logout.")
     except RuntimeError as e:
-        print(f"Logout succeeded: {e}")
+        print(f"Test Success: Logout succeeded: {e}")
