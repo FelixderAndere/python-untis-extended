@@ -9,7 +9,7 @@ class session():
     def __init__(self) -> None:
         self.base_url = os.getenv("BASE_URL")
         self.jsessionid = os.getenv("JSESSIONID")
-        self.login()
+        # self.login()
 
 
     def login(self):
@@ -19,6 +19,8 @@ class session():
     def send_request(self, endpoint, params):
         base_url = self.base_url
 
+        print("Base URL:", base_url)
+        print("Endpoint:", endpoint)
         url = f"{base_url}{endpoint}"
         print("URL:", url)
 
