@@ -43,5 +43,5 @@ def test_school_search():
 
 if __name__ == "__main__":
     #test_homework()
-    #test_timetable()
-    test_school_search()
+    test_timetable()
+    #test_school_search()
