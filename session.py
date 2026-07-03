@@ -29,7 +29,7 @@ class session():
 
 
     def send_request(self, endpoint, params):
-        """ Sends a GET request to the specified endpoint with the provided parameters."""
+        """Sends a GET request to the specified endpoint with the provided parameters."""
         base_url = self.base_url
 
         print("Base URL:", base_url)
@@ -40,15 +40,19 @@ class session():
         headers = {
             "User-Agent": "user",
             "Content-Type": "application/json",
+            "Accept": "application/json, text/plain, */*",
+            "Authorization": f"Bearer {self.jwt_token}",
+            "tenant-id": self.tenant_id,
+            "x-webuntis-api-school-year-id": self.current_schoolyear_id,
+            "Cookie": f"JSESSIONID={self.jsessionid}",
         }
-        headers["Cookie"] = f'JSESSIONID={self.jsessionid}'
-        
+
         response = requests.get(url, params=params, headers=headers)
 
-        print(response.status_code)
+        print("Status:", response.status_code)
+        print("Response:", response.text)
 
         return response.json()
-
 
 if __name__ == "__main__":
     start = datetime.datetime.now()
