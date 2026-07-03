@@ -6,26 +6,23 @@ import os
 import datetime
 from utils import rpcLogin, apiLogin
 from utils.jwt import decode_jwt_unverified
+import errors
 
 load_dotenv()
 
 class session():
     def __init__(self, base_url: str, username: str, password: str) -> None:
-        try:
-            self.base_url = base_url + "/WebUntis" if not base_url.endswith("/WebUntis") else base_url
-            self.username = username
-            self.password = password
+        self.base_url = base_url + "/WebUntis" if not base_url.endswith("/WebUntis") else base_url
+        self.username = username
+        self.password = password
 
-            self.session, self.jsessionid, self.schoolname, self.tenantid, self.token = apiLogin.login(self.base_url, username=username, password=password)
+        self.session, self.jsessionid, self.schoolname, self.tenantid, self.token = apiLogin.login(self.base_url, username=username, password=password)
 
-            self.jwt_claims = decode_jwt_unverified(self.token)
-            self.jwt_token = self.token
+        self.jwt_claims = decode_jwt_unverified(self.token)
+        self.jwt_token = self.token
 
-            if not self.jsessionid:
-                raise RuntimeError("No JSESSIONID received.")
-        
-        except Exception as e: 
-            raise RuntimeError("Failed Login")
+        if not self.jsessionid:
+            raise errors.UntisAPIError("No JSESSIONID received.")
 
 
     def logout(self):
