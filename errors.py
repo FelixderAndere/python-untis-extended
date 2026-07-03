@@ -21,6 +21,10 @@ class UntisCredentialsError(UntisError):
     """Raised when login credentials are invalid or authentication fails."""
     pass
 
+class UntisAuthError(UntisError):
+    """Raised when an authentication token is invalid or expired."""
+    pass
+
 
 # API / Data handling
 
