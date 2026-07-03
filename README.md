@@ -1,14 +1,14 @@
 # Python-untis-extended
 
 <p align="center">
-  <a href="https://pypi.org">
-    <img src="https://shields.io" alt="PyPI Version">
+  <a href="https://pypi.org/project/python-untis-extended/">
+    <img src="https://img.shields.io/pypi/v/python-untis-extended" alt="PyPI Version">
   </a>
-  <a href="https://python.org">
-    <img src="https://shields.io" alt="Python Version">
+  <a href="https://pypi.org/project/python-untis-extended/">
+    <img src="https://img.shields.io/pypi/pyversions/python-untis-extended" alt="Python Version">
   </a>
-  <a href="https://opensource.org">
-    <img src="https://shields.io" alt="License">
+  <a href="https://pypi.org/project/python-untis-extended/">
+    <img src="https://img.shields.io/pypi/l/python-untis-extended" alt="License">
   </a>
 </p>
 
@@ -20,11 +20,11 @@
 
 ## Architecture & Capabilities
 
-| Endpoint | Core Functionality
-| :--- | :--- | :--- |
-| `untis.timetable` | Period-accurate schedule extraction (with week and day objects)
-| `untis.homework` | Fetching homeworks with detailed information
-| `untis.schoolsearch` | Programmatic school search and server endpoint resolving
+| Endpoint | Core Functionality |
+| :--- | :--- |
+| `untis.timetable` | Period-accurate schedule extraction (with week and day objects) |
+| `untis.homework` | Fetching homeworks with detailed information |
+| `untis.schoolsearch` | Programmatic school search and server endpoint resolving |
 
 ---
 
