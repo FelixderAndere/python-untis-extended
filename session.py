@@ -24,8 +24,8 @@ class session():
             raise RuntimeError("Failed Login")
 
 
-    def login(self):
-        self.send_request(self, "/login")
+    def logout(self):
+        apiLogin.logout(self.session, base_url=self.base_url)
 
 
     def send_request(self, endpoint, params):
