@@ -4,16 +4,24 @@ import requests
 from dotenv import load_dotenv
 import os
 import datetime
-from utils import rpcLogin
+from utils import rpcLogin, apiLogin
 
 load_dotenv()
 
 class session():
-    def __init__(self) -> None:
-        self.base_url = os.getenv("BASE_URL")
-        sessionResult = rpcLogin.login(self.base_url, username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"))
-        self.jsessionid = sessionResult["sessionId"]
-        print(f"{self.jsessionid = }")
+    def __init__(self, base_url: str, username: str, password: str) -> None:
+        try:
+            self.base_url = base_url
+            self.username = username
+            self.password = password
+
+            self.session, self.jsessionid, self.token = apiLogin.login(self.base_url, username=username, password=password)
+            
+            if not self.jsessionid:
+                raise RuntimeError("No JSESSIONID received.")
+        
+        except Exception as e: 
+            raise RuntimeError("Failed Login")
 
 
     def login(self):
@@ -46,5 +54,5 @@ class session():
 if __name__ == "__main__":
     start = datetime.datetime.now()
     end = start + datetime.timedelta(days=7)
-    s = session()
+    s = session(base_url=os.getenv("BASE_URL"), username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"))
     s.send_request(endpoint="/WebUntis/api/homeworks/lessons", params={"startDate": start.strftime("%Y%m%d"), "endDate": end.strftime("%Y%m%d")})
