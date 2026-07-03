@@ -1,9 +1,11 @@
+from datetime import date
+
 
 class Timetable():
     def __init__(self, session):
         self.session = session
 
-    def get_timetable(self, start_date=None, end_date=None) -> list:
+    def get_timetable(self, start_date=date, end_date=date):
         """
         Fetches the timetable for the specified date range
         
@@ -12,4 +14,5 @@ class Timetable():
         :return: A list of timetable entries.
         """
         # Implementation to fetch timetable data from Untis API
-        pass
+        self.session.send_request(endpoint="/api/rest/view/v1/timetable/filter", params={"start": start_date, "end": end_date, "resourceType": "STUDENT", "timetableType": "MY_TIMETABLE"})
+
