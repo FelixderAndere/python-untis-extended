@@ -1,7 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
-import errors
+import errors as errors
 
 def _fetch_cookies(session: requests.Session, base_url: str, username: str, password: str) -> tuple:
     try:

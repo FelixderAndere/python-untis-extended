@@ -1,7 +1,7 @@
 import time
 import requests
 import json
-import objects
+import objects as objects
 
 class SchoolSearch:
     def __init__(self):

@@ -1,4 +1,4 @@
-from main import Untis
+from .untis_extended.main import Untis
 from dotenv import load_dotenv
 import os
 from datetime import date

@@ -1,8 +1,8 @@
-import session
-import objects
-import homework
-import timetable
-import schoolsearch
+import session as session
+import objects as objects
+import homework as homework
+import timetable as timetable
+import schoolsearch as schoolsearch
 from dotenv import load_dotenv
 import os
 

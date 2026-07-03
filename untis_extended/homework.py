@@ -1,7 +1,7 @@
 from datetime import date
 import json
-import objects
-import errors
+import objects as objects
+import errors as errors
 
 class Homework():
     def __init__(self, session):

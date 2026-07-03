@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-untis-extended"
+version = "0.1.0"
+authors = [
+  { name="Felixderandere"}, { name="mrtncode"},
+]
+description = "An extended unofficial Python wrapper for the Untis API"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+]
+dependencies = [
+    "requests>=2.34.0"
+]

@@ -4,9 +4,9 @@ import requests
 from dotenv import load_dotenv
 import os
 import datetime
-from utils import apiLogin
-from utils.jwt import decode_jwt_unverified
-import errors
+from untis_extended.utils import apiLogin
+from untis_extended.utils.jwt import decode_jwt_unverified
+import errors as errors
 
 load_dotenv()
 
