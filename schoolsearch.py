@@ -7,7 +7,7 @@ class SchoolSearch:
     def __init__(self):
         pass
 
-    def search_school(self, search_query: str):
+    def search_school(self, search_query: str) -> objects.SchoolSearchResult:
         """
         Search for schools based on the provided search query with the untis school search
             :param search_query: The search query for the school search.
@@ -44,8 +44,8 @@ class SchoolSearch:
             schools.append(objects.School.from_dict(school))
 
 
-        return {
-            "query": search_query,
-            "count": len(schools),
-            "schools": schools,
-        }
+        return objects.SchoolSearchResult(
+            query=search_query,
+            count=len(schools),
+            schools=schools
+        )

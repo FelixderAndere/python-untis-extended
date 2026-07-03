@@ -115,6 +115,7 @@ class TimetableWeek:
     
 
 # Schools
+
 @dataclass
 class School:
     name: str
@@ -135,3 +136,8 @@ class School:
             server_url=data.get("serverUrl", "")
         )
 
+@dataclass
+class SchoolSearchResult:
+    query: str
+    count: int
+    schools: list[School]

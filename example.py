@@ -33,6 +33,15 @@ def test_timetable():
     untis.session.logout()
 
 
+def test_school_search():
+    untis = Untis(base_url=os.getenv("BASE_URL"), username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"))
+    search_results = untis.schoolsearch.search_school(input("Enter school search query: "))
+    print("search results", search_results)
+    untis.session.logout()
+
+
 
 if __name__ == "__main__":
-    test_timetable()
+    #test_homework()
+    #test_timetable()
+    test_school_search()
