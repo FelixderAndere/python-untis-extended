@@ -15,7 +15,7 @@ class session():
             self.username = username
             self.password = password
 
-            self.session, self.jsessionid, self.token = apiLogin.login(self.base_url, username=username, password=password)
+            self.session, self.jsessionid, self.schoolname, self.tenantid, self.token = apiLogin.login(self.base_url, username=username, password=password)
             
             if not self.jsessionid:
                 raise RuntimeError("No JSESSIONID received.")

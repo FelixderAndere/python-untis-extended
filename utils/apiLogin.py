@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 
-def _fetch_cookies(session: requests.Session, base_url: str, username: str, password: str):
+def _fetch_cookies(session: requests.Session, base_url: str, username: str, password: str) -> tuple:
         response = session.post(
             f"{base_url}/j_spring_security_check",
             headers={
@@ -26,7 +26,10 @@ def _fetch_cookies(session: requests.Session, base_url: str, username: str, pass
             raise RuntimeError("No cookies received.")
         
         jsessionid = session.cookies.get("JSESSIONID")
-        return jsessionid
+        schoolname = session.cookies.get("schoolname")
+        tenantid = session.cookies.get("Tenant-Id")
+
+        return jsessionid, schoolname, tenantid
 
 
 def _fetch_token(session: requests.Session, base_url: str):
@@ -48,12 +51,12 @@ def _fetch_token(session: requests.Session, base_url: str):
         return token
 
 
-def login(base_url: str, username: str, password: str) -> tuple[requests.Session, str | None, str]:
+def login(base_url: str, username: str, password: str) -> tuple:
     base_url = base_url
     session = requests.Session()
-    jsessionid = _fetch_cookies(session=session, base_url=base_url, username=username, password=password)
+    jsessionid, schoolname, tenantid = _fetch_cookies(session=session, base_url=base_url, username=username, password=password)
     token = _fetch_token(session=session, base_url=base_url)
-    return session, jsessionid, token
+    return session, jsessionid, schoolname, tenantid, token
 
 
 def logout(session: requests.Session, base_url: str) -> int:
@@ -71,9 +74,12 @@ def logout(session: requests.Session, base_url: str) -> int:
 if __name__ == "__main__":
     load_dotenv()
 
-    session, jsessionid, token = login(base_url=os.getenv("BASE_URL"), username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"))
+    session, jsessionid, schoolname, tenantid, token = login(base_url=os.getenv("BASE_URL"), username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"))
 
     print(f"{token = }")
     print(f"\n{jsessionid = }")
+    print(f"\n{schoolname = }")
+    print(f"\n{tenantid = }")
+    print(f"\n{token = }")
 
     logout(session = session, base_url=os.getenv("BASE_URL"))
