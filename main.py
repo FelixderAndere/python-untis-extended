@@ -8,4 +8,4 @@ import schoolsearch
 class untis():
     def __init__(self) -> None:
         self.sesion = session.session()
-
+        self.homework = homework.Homework(self.sesion)
