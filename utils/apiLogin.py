@@ -3,34 +3,9 @@ import os
 from dotenv import load_dotenv
 
 
-class WebUntisClient:
-    def __init__(self, base_url: str):
-        self.base_url = base_url + "/WebUntis"
-        self.session = requests.Session()
-
-        self.token: str | None = None
-        self.jsessionid: str | None = None
-
-
-    def login(self, username: str, password: str) -> None:
-        self._fetch_cookies(username, password)
-        self._fetch_token()
-
-
-    def logout(self):
-        response = self.session.get(
-            f"{self.base_url}/saml/logout",
-            allow_redirects=False,
-            timeout=15,
-        )
-
-        response.raise_for_status()
-        return response.status_code == 302  # Expecting a redirect after logout
-        
-
-    def _fetch_cookies(self, username: str, password: str):
-        response = self.session.post(
-            f"{self.base_url}/j_spring_security_check",
+def _fetch_cookies(session: requests.Session, base_url: str, username: str, password: str):
+        response = session.post(
+            f"{base_url}/j_spring_security_check",
             headers={
                 "Accept": "application/json",
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -47,16 +22,16 @@ class WebUntisClient:
             raise RuntimeError("School or server not found.")
         response.raise_for_status()
 
-        if not self.session.cookies:
+        if not session.cookies:
             raise RuntimeError("No cookies received.")
         
-        self.jsessionid = self.session.cookies.get("JSESSIONID")
-        return self.session.cookies.get_dict()
+        jsessionid = session.cookies.get("JSESSIONID")
+        return jsessionid
 
 
-    def _fetch_token(self):
-        response = self.session.get(
-            f"{self.base_url}/api/token/new",
+def _fetch_token(session: requests.Session, base_url: str):
+        response = session.get(
+            f"{base_url}/api/token/new",
             timeout=15,
         )
 
@@ -69,37 +44,36 @@ class WebUntisClient:
         if not token:
             raise RuntimeError("No bearer token received.")
 
-        self.token = token
-        return self.token
+        token = token
+        return token
 
 
-def test_session(client: WebUntisClient):
-    try:
-        client._fetch_token()
-        return True
-    except RuntimeError as e:
-        return False
+def login(base_url: str, username: str, password: str) -> tuple[requests.Session, str | None, str]:
+    base_url = base_url + "/WebUntis"
+    session = requests.Session()
+    jsessionid = _fetch_cookies(session=session, base_url=base_url, username=username, password=password)
+    token = _fetch_token(session=session, base_url=base_url)
+    return session, jsessionid, token
 
+
+def logout(session: requests.Session, base_url: str) -> int:
+    response = session.get(
+        f"{base_url}/saml/logout",
+        allow_redirects=False,
+        timeout=15,
+    )
+
+    response.raise_for_status()
+    return response.status_code == 302  # Expecting a redirect after logout
+        
 
 
 if __name__ == "__main__":
     load_dotenv()
 
-    client = WebUntisClient(base_url=os.getenv("BASE_URL"))
-    client.login(username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"),)
+    session, jsessionid, token = login(base_url=os.getenv("BASE_URL"), username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"))
 
-    print(f"{client.token = }")
-    print(f"\n{client.jsessionid = }")
-    print(f"\n{client.session.cookies.get_dict() = }")
+    print(f"{token = }")
+    print(f"\n{jsessionid = }")
 
-    if test_session(client):
-        print("\nTest Success: Login succeeded.")
-    else:
-        print("\nTest Fail: Login failed.")
-    
-    client.logout()
-
-    if test_session(client):
-        print("\nTest Fail: Logout failed.")
-    else:
-        print("\nTest Success: Logout succeeded.")
+    logout(session = session, base_url=os.getenv("BASE_URL"))
