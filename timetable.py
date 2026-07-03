@@ -14,5 +14,17 @@ class Timetable():
         :return: A list of timetable entries.
         """
         # Implementation to fetch timetable data from Untis API
-        response = self.session.send_request(endpoint="/api/rest/view/v1/timetable/entries", params={"start": start_date, "end": end_date, "resourceType": "STUDENT", "timetableType": "MY_TIMETABLE", "ressources": "1949", "layout": "START_TIME"})
+        response = self.session.send_request(
+            endpoint="/WebUntis/api/rest/view/v1/timetable/entries",
+            params={
+                "start": start_date.isoformat(),
+                "end": end_date.isoformat(),
+                "format": "6",
+                "resourceType": "STUDENT",
+                "resources": "1949",
+                "periodTypes": "",
+                "timetableType": "MY_TIMETABLE",
+                "layout": "START_TIME",
+            }
+        )
         return response
