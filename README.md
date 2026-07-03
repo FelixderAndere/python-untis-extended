@@ -1,42 +1,59 @@
-# python-untis-extended
+# Python-untis-extended
 
-![PyPI](https://img.shields.io/pypi/v/python-untis-extended?style=flat-square)
-![Python](https://img.shields.io/badge/python-3.8%2B-blue?style=flat-square)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
+<p align="center">
+  <a href="https://pypi.org">
+    <img src="https://shields.io" alt="PyPI Version">
+  </a>
+  <a href="https://python.org">
+    <img src="https://shields.io" alt="Python Version">
+  </a>
+  <a href="https://opensource.org">
+    <img src="https://shields.io" alt="License">
+  </a>
+</p>
 
-A modern Python wrapper for accessing **Untis data** with extended features like timetables, homework handling, school search, and structured data models.
+<p align="center">
+  <b>A simple and object-oriented Python client for Untis.</b><br>
+</p>
 
 ---
 
-## Features
+## Architecture & Capabilities
 
-- Timetable retrieval
-- Homework fetching
-- School search
-- Structured objects for clean data handling
-- Custom exceptions for robust error handling
-- Simple and developer-friendly API
+| Endpoint | Core Functionality
+| :--- | :--- | :--- |
+| `untis.timetable` | Period-accurate schedule extraction (with week and day objects)
+| `untis.homework` | Fetching homeworks with detailed information
+| `untis.schoolsearch` | Programmatic school search and server endpoint resolving
 
 ---
 
-## Installation
+## Installation (WIP)
 
+Deploy the stable distribution via the package manager:
+
+```bash
 pip install python-untis-extended
+```
 
 ---
 
 ## Quick Start
 
+```python
 from datetime import date
 from python_untis_extended import Untis
 
+# Initialize the client instance
 untis = Untis()
 
+# Fetch active homework assignments within a date range
 homeworks = untis.homework.get_homework(
     start_date=date(2026, 4, 1),
     end_date=date(2026, 6, 29)
 )
 
+# Retrieve the structured lesson schedule
 timetable = untis.timetable.get_timetable(
     start_date=date(2026, 6, 29),
     end_date=date(2026, 7, 1)
@@ -44,39 +61,20 @@ timetable = untis.timetable.get_timetable(
 
 print(homeworks)
 print(timetable)
+```
 
 ---
 
-## Content
+## Module Overview
 
 ### Timetable
-
-Retrieve structured lesson schedules for a given time range.  
-Includes subjects, rooms, teachers, and time slots.
-
----
+Extracts structured lesson schedules for defined time ranges. The engine processes core metadata fields into clean object attributes, mapping subjects, physical rooms, assigned educators, and exact time intervals.
 
 ### Homework
-
-Fetch homework assignments between two dates.  
-Useful for tracking school tasks and planning ahead.
-
----
+Queries upcoming school assignments between two dates. Designed to feed automated notification systems, tracking dashboards, and planning applications.
 
 ### School Search
-
-Search for schools programmatically to simplify onboarding and configuration.
-
----
-
-## Example Use Cases
-
-- Student planning dashboards
-- Homework tracking bots
-- School organization tools
-- Automation scripts for syncing timetables
-- Educational productivity apps
-
+Provides the untis school search to easily fetch a school without need to know the exact untis school name
 
 ---
 
