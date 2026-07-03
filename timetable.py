@@ -1,6 +1,7 @@
 from datetime import date
+import json
 import objects
-
+import errors
 
 class Timetable():
     def __init__(self, session):
@@ -8,37 +9,42 @@ class Timetable():
 
     def get_timetable(self, start_date: date, end_date: date):
         """
-        Fetches the timetable for the specified date range
+        Fetches the timetable for the specified date range.
         
-        :param start_date: The start date for the timetable (optional).
-        :param end_date: The end date for the timetable (optional).
-        :return: A list of timetable entries.
+        :param start_date: The start date for the timetable.
+        :param end_date: The end date for the timetable.
+        :return: An instance of objects.TimetableWeek.
+        :raises UntisError: Any child exception from errors.py depending on the failure mode.
         """
+        response = self.session.send_request(
+            endpoint="/api/rest/view/v1/timetable/entries",
+            params={
+                "start": start_date.isoformat(),
+                "end": end_date.isoformat(),
+                "format": "20",
+                "resourceType": self._get_resource_type(self.session.jwt_claims),
+                "resources": self.session.jwt_claims.get("person_id"),
+                "periodTypes": "",
+                "timetableType": "MY_TIMETABLE",
+                "layout": "START_TIME",
+            }
+        )
 
         try:
-            response = self.session.send_request(
-                endpoint="/api/rest/view/v1/timetable/entries",
-                params={
-                    "start": start_date.isoformat(),
-                    "end": end_date.isoformat(),
-                    "format": "20",
-                    "resourceType": self._get_resource_type(self.session.jwt_claims),
-                    "resources": self.session.jwt_claims.get("person_id"),
-                    "periodTypes": "",
-                    "timetableType": "MY_TIMETABLE",
-                    "layout": "START_TIME",
-                }
-            )
-
-            response.raise_for_status()
             payload = response.json()
+        except (json.JSONDecodeError, ValueError) as e:
+            raise errors.UntisDataError("Received a non-JSON response from the timetable API.") from e
+
+        try:
             return objects.TimetableWeek.from_dict(payload)
         except Exception as e:
-            print(f"Error occurred while fetching timetable: {e}")
-            return None
-    
-    def _get_resource_type(self, jwt_claims):
+            raise errors.UntisDataError(
+                f"Failed to map JSON data into a TimetableWeek object structure. Inner error: {e}"
+            ) from e
+
+    def _get_resource_type(self, jwt_claims: dict) -> str:
         types = str(jwt_claims.get("roles", "")).upper()
-        for type in ("STUDENT", "TEACHER"):
-            if type in types:
-                return type
+        for r_type in ("STUDENT", "TEACHER"):
+            if r_type in types:
+                return r_type
+        return "STUDENT"

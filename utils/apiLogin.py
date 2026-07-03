@@ -1,9 +1,10 @@
 import requests
 import os
 from dotenv import load_dotenv
-
+import errors
 
 def _fetch_cookies(session: requests.Session, base_url: str, username: str, password: str) -> tuple:
+    try:
         response = session.post(
             f"{base_url}/j_spring_security_check",
             headers={
@@ -17,69 +18,70 @@ def _fetch_cookies(session: requests.Session, base_url: str, username: str, pass
             },
             timeout=15,
         )
-
+        
         if response.status_code == 404:
-            raise RuntimeError("School or server not found.")
+            raise errors.UntisAPIError("School or server not found (404). Check your base URL.")
+        
         response.raise_for_status()
 
-        if not session.cookies:
-            raise RuntimeError("No cookies received.")
-        
-        jsessionid = session.cookies.get("JSESSIONID")
-        schoolname = session.cookies.get("schoolname")
-        tenantid = session.cookies.get("Tenant-Id")
+    except requests.Timeout as e:
+        raise errors.UntisTimeoutError("Connection timed out while fetching cookies.") from e
+    except requests.ConnectionError as e:
+        raise errors.UntisConnectionError("Failed to connect to the Untis server while fetching cookies.") from e
+    except requests.HTTPError as e:
+        raise errors.UntisAPIError(f"HTTP Error during cookie fetch: {e.response.status_code}") from e
 
-        return jsessionid, schoolname, tenantid
+    if not session.cookies:
+        raise errors.UntisDataError("Authentication seemingly succeeded, but no session cookies were received.")
+    
+    jsessionid = session.cookies.get("JSESSIONID")
+    schoolname = session.cookies.get("schoolname")
+    tenantid = session.cookies.get("Tenant-Id")
+
+    return jsessionid, schoolname, tenantid
 
 
 def _fetch_token(session: requests.Session, base_url: str):
+    try:
         response = session.get(
             f"{base_url}/api/token/new",
             timeout=15,
         )
-
         response.raise_for_status()
-        token = response.text.strip()
+        
+    except requests.Timeout as e:
+        raise errors.UntisTimeoutError("Connection timed out while retrieving API token.") from e
+    except requests.ConnectionError as e:
+        raise errors.UntisConnectionError("Failed to connect to the Untis server while retrieving API token.") from e
+    except requests.HTTPError as e:
+        raise errors.UntisAPIError(f"HTTP Error during token fetch: {e.response.status_code}") from e
 
-        if "loginError" in token:
-            raise RuntimeError("Invalid username or password.")
+    token = response.text.strip()
 
-        if not token:
-            raise RuntimeError("No bearer token received.")
+    if "loginError" in token:
+        raise errors.UntisCredentialsError("Invalid username or password.")
 
-        token = token
-        return token
+    if not token:
+        raise errors.UntisAuthError("Server response empty. No bearer token received.")
+
+    return token
 
 
 def login(base_url: str, username: str, password: str) -> tuple:
-    base_url = base_url
     session = requests.Session()
     jsessionid, schoolname, tenantid = _fetch_cookies(session=session, base_url=base_url, username=username, password=password)
     token = _fetch_token(session=session, base_url=base_url)
     return session, jsessionid, schoolname, tenantid, token
 
 
-def logout(session: requests.Session, base_url: str) -> int:
-    response = session.get(
-        f"{base_url}/saml/logout",
-        allow_redirects=False,
-        timeout=15,
-    )
-
-    response.raise_for_status()
-    return response.status_code == 302  # Expecting a redirect after logout
-        
-
-
-if __name__ == "__main__":
-    load_dotenv()
-
-    session, jsessionid, schoolname, tenantid, token = login(base_url=os.getenv("BASE_URL"), username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"))
-
-    print(f"{token = }")
-    print(f"\n{jsessionid = }")
-    print(f"\n{schoolname = }")
-    print(f"\n{tenantid = }")
-    print(f"\n{token = }")
-
-    logout(session = session, base_url=os.getenv("BASE_URL"))
+def logout(session: requests.Session, base_url: str) -> bool:
+    try:
+        response = session.get(
+            f"{base_url}/saml/logout",
+            allow_redirects=False,
+            timeout=15,
+        )
+        response.raise_for_status()
+        return response.status_code == 302  # Expecting a redirect after logout
+    except (requests.Timeout, requests.ConnectionError):
+        return False
