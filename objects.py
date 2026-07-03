@@ -112,4 +112,26 @@ class TimetableWeek:
             lesson_objects.extend(day.lessons.lessons)
 
         return cls(days=day_objects, lessons=LessonList(lessons=lesson_objects))
+    
+
+# Schools
+@dataclass
+class School:
+    name: str
+    login_name: str
+    school_id: int
+    address: str
+    server: str
+    server_url: str
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "School":
+        return cls(
+            name=data.get("displayName", ""),
+            login_name=data.get("loginName", ""),
+            school_id=data.get("schoolId", 0),
+            address=data.get("address", ""),
+            server=data.get("server", ""),
+            server_url=data.get("serverUrl", "")
+        )
 
