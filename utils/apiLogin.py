@@ -49,7 +49,7 @@ def _fetch_token(session: requests.Session, base_url: str):
 
 
 def login(base_url: str, username: str, password: str) -> tuple[requests.Session, str | None, str]:
-    base_url = base_url + "/WebUntis"
+    base_url = base_url
     session = requests.Session()
     jsessionid = _fetch_cookies(session=session, base_url=base_url, username=username, password=password)
     token = _fetch_token(session=session, base_url=base_url)

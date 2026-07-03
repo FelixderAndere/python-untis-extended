@@ -10,11 +10,8 @@ load_dotenv()
 
 class Untis():
     def __init__(self, base_url, username, password) -> None:
-        self.sesion = session.session(base_url=base_url, username=username, password=password)
-        self.homework = homework.Homework(self.sesion)
-        self.timetable = timetable.Timetable(self.sesion)
+        self.session = session.session(base_url=base_url, username=username, password=password)
+        print("self session", self.session.jsessionid)
+        self.homework = homework.Homework(self.session)
+        self.timetable = timetable.Timetable(self.session)
         self.schoolsearch = schoolsearch.SchoolSearch()
-
-
-if __name__ == "__main:__":
-    U = Untis(base_url=os.getenv("UNTIS_USERNAME"), username=os.getenv("UNTIS_USERNAME"), password=os.getenv("UNTIS_PASSWORD"))
