@@ -7,7 +7,7 @@ class Homework():
     def get_homework(self, start_date: str, end_date: str):
         try:
             response = self.session.send_request(endpoint="/api/homeworks/lessons", params={"startDate": start_date, "endDate": end_date})
-            return response.text[:500]
+            return response.text[:900]
         except Exception as e:
             print(f"Error occurred while fetching homework: {e}")
             return None
