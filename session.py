@@ -11,7 +11,7 @@ load_dotenv()
 class session():
     def __init__(self, base_url: str, username: str, password: str) -> None:
         try:
-            self.base_url = base_url
+            self.base_url = base_url + "/WebUntis" if not base_url.endswith("/WebUntis") else base_url
             self.username = username
             self.password = password
 
@@ -46,9 +46,8 @@ class session():
         response = requests.get(url, params=params, headers=headers)
 
         print(response.status_code)
-        print(response.text[:500])
 
-        return response
+        return response.json()
 
 
 if __name__ == "__main__":
